@@ -1,0 +1,17 @@
+1. Database sync
+	-- In Old Prototype, there is No common Database mechanism implemented
+ 	-- Every component had its own db copy
+	-- Because of this synchronization was never achieved, most of it was faked.
+	-- Databse sync implementation and usage of it in our version of prototype resolves this issue
+	-- Basically in our version, there is no faking, its real data and real mapping.
+2. Canvas Cursor Implmentation
+	-- The Cursor Stretching Effect on edges are currently implemented with a Fake DIV and using image and transforms to achieve the effect.
+	-- But the Effect does not have physics because of which the stretching looks weird
+	-- By Implementing a canvas based cursor, we can control the physics (shape,size,speed etc....) of the cursor and achieve a more realistic stretching and bouncing effect.
+3. Observer Implementation
+	-- This is key implementation for Database Synchronization.
+	-- Every component updates its UI automatically without the need for routing data from one function to another, or manually
+	-- Every component subscribes to specific change-list in its database and gets notified whenever anything changes internally or by external party
+	-- As a result it updates its UI and local DB copy automatically.
+	-- This saves lot of synchronization logic and keeps the prototype accurate and realtime.
+	-- It's sacalable and keeps components modular and separate without need for interfering with each other.
