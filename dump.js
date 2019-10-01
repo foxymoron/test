@@ -13,7 +13,7 @@ function launch({ name, data }) {
   const next = name;
   const nextIsSource = sourceApps.includes(next);
   const nextIsPartial = partialApps.includes(next);
-  const nextIsFull = !nextIsSource && !nextIsPartial;
+  const nextIsFull = fullApps.includes(next);
   const nextIsSuper = superApps.includes(next);
   const nextInBackground = backgroundApps.includes(next);
   let nextLink = data.origin;
@@ -93,7 +93,7 @@ function launch({ name, data }) {
     const cur = baseStack[baseStack.length - 1];
     const curLink = baseLinks[baseLinks.length - 1];
     const curIsSource = cur && sourceApps.includes(cur);
-    const curIsFull = cur && !curIsSource;
+    const curIsFull = cur && fullApps.includes(cur);
     if (next === cur) nextLoading = false;
     if (next !== cur && curIsFull) {
       commit('App_BASE_REMOVE', { name: cur });
@@ -123,7 +123,7 @@ function close({ name }) {
   const cur = name;
   const curIsSource = sourceApps.includes(cur);
   const curIsPartial = partialApps.includes(cur);
-  const curIsFull = !curIsSource && !curIsPartial;
+  const curIsFull = fullApps.includes(cur);
   const curIsSuper = superApps.includes(next);
   
   if (curIsSuper) {
@@ -155,9 +155,9 @@ function close({ name }) {
     commit('App_BASE_REMOVE', { name: cur });
     const next = curLink;
     const nextInBackground = next && backgroundApps.includes(next);
-    const nextIsSource = sourceApps.includes(cur);
-    const nextIsPartial = partialApps.includes(cur);
-    const nextIsFull = !nextIsSource && !nextIsPartial;
+    const nextIsSource = next && sourceApps.includes(next);
+    const nextIsPartial = next && partialApps.includes(next);
+    const nextIsFull = next && fullApps.includes(next);
     if (nextInBackground && nextIsFull) {
       launch({ name: next, data: { restoring: true } });
       return;
