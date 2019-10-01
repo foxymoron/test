@@ -3,6 +3,8 @@ const baseLinks = [];
 const baseLoading = [];
 const partialStack = [];
 const partialLinks = [];
+const superStack = [];
+const superLinks = [];
 const backgroundApps = [];
 const backgroundLinks = [];
 
@@ -12,10 +14,21 @@ function launch({ name, data }) {
   const nextIsSource = sourceApps.includes(next);
   const nextIsPartial = partialApps.includes(next);
   const nextIsFull = !nextIsSource && !nextIsPartial;
+  const nextIsSuper = superApps.includes(next);
   const nextInBackground = backgroundApps.includes(next);
   let nextLink = data.origin;
   let nextLoading = true;
   let nextRestoring = data.restoring;
+  
+  if (superStack.length) {
+    // send cur super apps to background
+    const cur = superStack[superStack.length - 1];
+    const curLink = superLinks[superLinks.length - 1];
+    if (next === cur) return;
+    commit('App_SUPER_REMOVE', { name: cur });
+    commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
+    dispatch(`${next}/${next}_HIDE`);
+  }
   
   if (partialStack.length) {
     // send cur partial apps to background
@@ -25,6 +38,19 @@ function launch({ name, data }) {
     commit('App_PARTIAL_REMOVE', { name: cur });
     commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
     dispatch(`${next}/${next}_HIDE`);
+  }
+  
+  if (nextIsSuper) {
+    if (nextInBackground) {
+      if (nextRestoring) {
+        nextLink = backgroundLinks[backgroundApps.indexOf(next)];
+      }
+      commit('App_BACKGROUND_REMOVE', { name: next });
+    }
+    commit('App_SUPER_ADD', { name: next, link: nextLink });
+    dispatch(`${next}/${next}_SET`, data);
+    dispatch(`${next}/${next}_SHOW`);
+    return;
   }
   
   if (nextIsPartial) {
@@ -92,6 +118,19 @@ function close({ name }) {
   const curIsSource = sourceApps.includes(cur);
   const curIsPartial = partialApps.includes(cur);
   const curIsFull = !curIsSource && !curIsPartial;
+  const curIsSuper = superApps.includes(next);
+  
+  if (curIsSuper) {
+    const curLink = superLinks[superStack.indexOf(cur)];
+    commit('App_SUPER_REMOVE', { name: cur });
+    dispatch(`${cur}/${cur}_HIDE`);
+    const next = curLink;
+    const nextInBackground = next && backgroundApps.includes(next);
+    if (nextInBackground) {
+      launch({ name: next, data: { restoring: true } });
+    }
+    return;
+  }
   
   if (curIsPartial) {
     const curLink = partialLinks[partialStack.indexOf(cur)];
