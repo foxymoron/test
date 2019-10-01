@@ -24,24 +24,28 @@ function launch({ name, data }) {
     // send cur super apps to background
     const cur = superStack[superStack.length - 1];
     const curLink = superLinks[superLinks.length - 1];
-    if (next === cur) return;
-    commit('App_SUPER_REMOVE', { name: cur });
-    commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
-    dispatch(`${next}/${next}_HIDE`);
+    if (next !== cur) {
+      commit('App_SUPER_REMOVE', { name: cur });
+      commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
+      dispatch(`${next}/${next}_HIDE`);
+    }
   }
   
   if (partialStack.length) {
     // send cur partial apps to background
     const cur = partialStack[partialStack.length - 1];
     const curLink = partialLinks[partialLinks.length - 1];
-    if (next === cur) return;
-    commit('App_PARTIAL_REMOVE', { name: cur });
-    commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
-    dispatch(`${next}/${next}_HIDE`);
+    if (next !== cur) {
+      commit('App_PARTIAL_REMOVE', { name: cur });
+      commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
+      dispatch(`${next}/${next}_HIDE`);
+    }
   }
   
   if (nextIsSuper) {
-    if (nextInBackground) {
+    const cur = superStack[superStack.length - 1];
+    const curLink = superLinks[superLinks.length - 1];
+    if (next !== cur && nextInBackground) {
       if (nextRestoring) {
         nextLink = backgroundLinks[backgroundApps.indexOf(next)];
       }
@@ -54,7 +58,9 @@ function launch({ name, data }) {
   }
   
   if (nextIsPartial) {
-    if (nextInBackground) {
+    const cur = partialStack[partialStack.length - 1];
+    const curLink = partialLinks[partialLinks.length - 1];
+    if (next !== cur && nextInBackground) {
       if (nextRestoring) {
         nextLink = backgroundLinks[backgroundApps.indexOf(next)];
       }
@@ -69,8 +75,8 @@ function launch({ name, data }) {
   if (nextIsFull) {
     const cur = baseStack[baseStack.length - 1];
     const curLink = baseLinks[baseLinks.length - 1];
-    if (next === cur) return;
-    if (nextInBackground) {
+    if (next === cur) nextLoading = false;
+    if (next !== cur && nextInBackground) {
       if (nextRestoring) {
         nextLink = backgroundLinks[backgroundApps.indexOf(next)];
       }
@@ -88,16 +94,16 @@ function launch({ name, data }) {
     const curLink = baseLinks[baseLinks.length - 1];
     const curIsSource = cur && sourceApps.includes(cur);
     const curIsFull = cur && !curIsSource;
-    if (next === cur) return;
-    if (curIsFull) {
+    if (next === cur) nextLoading = false;
+    if (next !== cur && curIsFull) {
       commit('App_BASE_REMOVE', { name: cur });
       commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
     }
-    if (curIsSource) {
+    if (next !== cur && curIsSource) {
       commit('App_BASE_REMOVE', { name: cur });
       commit('App_SOURCE_HISTORY_ADD', { name: cur });
     }
-    if (nextInBackground) {
+    if (next !== cur && nextInBackground) {
       if (nextRestoring) {
         nextLink = backgroundLinks[backgroundApps.indexOf(next)];
       }
