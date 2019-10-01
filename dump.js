@@ -84,5 +84,53 @@ function launch({ name, data }) {
     return;
   }
 
+}
 
+function close({ name }) {
+  
+  const cur = name;
+  const curIsSource = sourceApps.includes(cur);
+  const curIsPartial = partialApps.includes(cur);
+  const curIsFull = !curIsSource && !curIsPartial;
+  
+  if (curIsPartial) {
+    const curLink = partialLinks[partialStack.indexOf(cur)];
+    commit('App_PARTIAL_REMOVE', { name: cur });
+    dispatch(`${cur}/${cur}_HIDE`);
+    const next = curLink;
+    const nextInBackground = next && backgroundApps.includes(next);
+    if (nextInBackground) {
+      launch({ name: next, data: { restoring: true } });
+    }
+    return;
+  }
+  
+  if (curIsFull) {
+    const curLink = baseLinks[baseStack.indexOf(cur)];
+    commit('App_BASE_REMOVE', { name: cur });
+    const next = curLink;
+    const nextInBackground = next && backgroundApps.includes(next);
+    const nextIsSource = sourceApps.includes(cur);
+    const nextIsPartial = partialApps.includes(cur);
+    const nextIsFull = !nextIsSource && !nextIsPartial;
+    if (nextInBackground && nextIsFull) {
+      launch({ name: next, data: { restoring: true } });
+      return;
+    }
+    if (nextInBackground && nextIsPartial) {
+      launch({ name: sourceApp, data: { restoring: true } });
+      launch({ name: next, data: { restoring: true } });
+      return;
+    }
+    launch({ name: sourceApp, data: { restoring: true } });
+    return;
+  }
+  
+}
+
+function sendPrev2Background() {
+  const cur = baseStack[0];
+  const curLink = baseLinks[0];
+  commit('App_BASE_REMOVE', { name: cur });
+  commit('App_BACKGROUND_ADD', { name: cur, link: curLink });
 }
