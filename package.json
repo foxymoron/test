@@ -1,0 +1,23 @@
+{
+  "name": "root",
+  "private": true,
+  "scripts": {
+    "serve": "cd packages/testy && npm run serve",
+    "commit": "git-cz"
+  },
+  "devDependencies": {
+    "chalk": "^2.4.2",
+    "commitizen": "^4.0.3",
+    "cz-conventional-changelog": "^3.0.2",
+    "lerna": "^3.18.1",
+    "yorkie": "^2.0.0"
+  },
+  "gitHooks": {
+    "commit-msg": "node scripts/verifyCommit.js"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}
