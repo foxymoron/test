@@ -1,23 +1,30 @@
 {
-  "name": "root",
+  "name": "using-vue2-vuetify2-vite",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "serve": "cd packages/testy && npm run serve",
-    "commit": "git-cz"
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview",
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore --fix src"
+  },
+  "dependencies": {
+    "vue": "^2.6.14",
+    "vue-router": "^3.5.1",
+    "vuetify": "^2.6.0",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
-    "chalk": "^2.4.2",
-    "commitizen": "^4.0.3",
-    "cz-conventional-changelog": "^3.0.2",
-    "lerna": "^3.18.1",
-    "yorkie": "^2.0.0"
-  },
-  "gitHooks": {
-    "commit-msg": "node scripts/verifyCommit.js"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "@vue/eslint-config-airbnb": "^6.0.0",
+    "eslint": "^8.33.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-vue": "^8.7.1",
+    "eslint-plugin-vuejs-accessibility": "^1.1.0",
+    "sass": "^1.32.7",
+    "unplugin-vue-components": "^0.23.0",
+    "vite": "^2.5.4",
+    "vite-plugin-eslint": "^1.8.1",
+    "vite-plugin-vue2": "2.0.3",
+    "vuetify-loader": "^1.7.0"
   }
 }
